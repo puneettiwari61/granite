@@ -15,3 +15,4 @@ ReactRailsUJS.useContext(componentRequireContext);
 
 Rails.start();
 ActiveStorage.start();
+// Support component names relative to this directory:
