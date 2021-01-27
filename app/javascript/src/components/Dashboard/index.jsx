@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { isNil, isEmpty, either } from "ramda";
-import Logger from "js-logger";
-import Container from "../Container";
-import PageLoader from "../PageLoader";
-import tasksApi from "../../apis/task";
-import ListTasks from "./../Tasks/ListTasks";
+
+import Container from "components/Container";
+import ListTasks from "components/Tasks/ListTasks";
+import tasksApi from "apis/tasks";
+import PageLoader from "components/PageLoader";
 
 const Dashboard = ({ history }) => {
   const [tasks, setTasks] = useState([]);
@@ -14,16 +14,31 @@ const Dashboard = ({ history }) => {
     try {
       const response = await tasksApi.list();
       setTasks(response.data.tasks);
-      Logger.info(response, "response");
       setLoading(false);
     } catch (error) {
-      Logger.error(error);
+      logger.error(error);
       setLoading(false);
     }
   };
 
+  const destroyTask = async id => {
+    try {
+      await tasksApi.destroy(id);
+      await fetchTasks();
+    } catch (error) {
+      logger.error(error);
+    }
+  };
+
+  const showTask = id => {
+    history.push(`/tasks/${id}/show`);
+  };
+
+  const updateTask = id => {
+    history.push(`/tasks/${id}/edit`);
+  };
+
   useEffect(() => {
-    // Logger.info("from use effect");
     fetchTasks();
   }, []);
 
@@ -35,19 +50,24 @@ const Dashboard = ({ history }) => {
     );
   }
 
-  if (!either(isNil, isEmpty)(tasks)) {
+  if (either(isNil, isEmpty)(tasks)) {
     return (
       <Container>
-        <ListTasks data={tasks} />
+        <h1 className="text-xl leading-5 text-center">
+          You have no tasks assigned 😔
+        </h1>
       </Container>
     );
   }
 
   return (
     <Container>
-      <h1 className="text-xl leading-5 text-center">
-        You have no tasks assigned 😔
-      </h1>
+      <ListTasks
+        data={tasks}
+        destroyTask={destroyTask}
+        updateTask={updateTask}
+        showTask={showTask}
+      />
     </Container>
   );
 };
