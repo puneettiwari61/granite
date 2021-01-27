@@ -6,6 +6,7 @@ import Dashboard from "./components/Dashboard";
 import CreateTask from "./components/Tasks/CreateTask";
 import { setAuthHeaders, registerIntercepts } from "./apis/axios";
 import { ToastContainer } from "react-toastify";
+import ShowTask from "./components/Tasks/ShowTask";
 
 const App = () => {
   const [loading, setLoading] = useState(true);
