@@ -3,7 +3,7 @@ import { isNil, isEmpty, either } from "ramda";
 import Logger from "js-logger";
 import Container from "../Container";
 import PageLoader from "../PageLoader";
-import { tasksApi } from "../../apis/task";
+import tasksApi from "../../apis/task";
 import ListTasks from "./../Tasks/ListTasks";
 
 const Dashboard = ({ history }) => {
@@ -14,6 +14,7 @@ const Dashboard = ({ history }) => {
     try {
       const response = await tasksApi.list();
       setTasks(response.data.tasks);
+      Logger.info(response, "response");
       setLoading(false);
     } catch (error) {
       Logger.error(error);
@@ -22,6 +23,7 @@ const Dashboard = ({ history }) => {
   };
 
   useEffect(() => {
+    // Logger.info("from use effect");
     fetchTasks();
   }, []);
 
