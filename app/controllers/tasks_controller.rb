@@ -1,5 +1,5 @@
 class TasksController < ApplicationController
-  before_action :load_task, only: [:show]
+  before_action :load_task, only: %i[show update]
 
   def index
     tasks = Task.all
@@ -20,6 +20,14 @@ class TasksController < ApplicationController
     render status: :ok, json: { task: @task}
   end
 
+  def update
+    if @task.update(tasks_params)
+      render status: :ok, json: { notice: "Task was successfully updated" }
+    else
+      render status: :unprocessable_entity, json: { errors: @task.errors.full_messages }
+    end
+  end
+
   private
     def tasks_params 
       params.require(:task).permit(:title)
@@ -27,6 +35,7 @@ class TasksController < ApplicationController
 
     def load_task 
       @task = Task.find(params[:id])
+      puts "#{@task} task from load_task"
       rescue ActiveRecord::RecordNotFound => errors
         render status: :not_found, json: { errors: errors}
     end

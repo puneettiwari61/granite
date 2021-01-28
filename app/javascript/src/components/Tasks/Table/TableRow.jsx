@@ -19,7 +19,8 @@ const TableRow = ({ data, destroyTask, updateTask, showTask }) => {
           </td>
           <td className="px-6 py-4 text-sm font-medium leading-5 text-right cursor-pointer">
             <a
-              className="text-yellow-600 hover:text-yellow-900"
+              className="text-indigo-600
+               hover:text-yellow-900"
               onClick={() => updateTask(rowData.id)}
             >
               Edit

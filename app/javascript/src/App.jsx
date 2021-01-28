@@ -7,6 +7,7 @@ import CreateTask from "./components/Tasks/CreateTask";
 import { setAuthHeaders, registerIntercepts } from "./apis/axios";
 import { ToastContainer } from "react-toastify";
 import ShowTask from "./components/Tasks/ShowTask";
+import EditTask from "./components/Tasks/EditTask";
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -25,6 +26,7 @@ const App = () => {
       <Switch>
         <Route exact path="/" render={() => <div>Home</div>} />
         <Route exact path="/about" render={() => <div>About</div>} />
+        <Route exact path="/tasks/:id/edit" component={EditTask} />
         <Route exact path="/tasks/:id/show" component={ShowTask} />
         <Route exact path="/tasks/create" component={CreateTask} />
         <Route exact path="/dashboard" component={Dashboard} />
