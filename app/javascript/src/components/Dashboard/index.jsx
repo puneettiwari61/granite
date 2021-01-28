@@ -3,7 +3,7 @@ import { isNil, isEmpty, either } from "ramda";
 
 import Container from "../Container";
 import ListTasks from "../Tasks/ListTasks";
-import tasksApi from "../../apis/task";
+import tasksApi from "../../apis/tasks";
 import PageLoader from "../PageLoader";
 
 const Dashboard = ({ history }) => {
@@ -30,12 +30,12 @@ const Dashboard = ({ history }) => {
     }
   };
 
-  const showTask = id => {
-    history.push(`/tasks/${id}/show`);
-  };
-
   const updateTask = id => {
     history.push(`/tasks/${id}/edit`);
+  };
+
+  const showTask = id => {
+    history.push(`/tasks/${id}/show`);
   };
 
   useEffect(() => {
@@ -50,24 +50,24 @@ const Dashboard = ({ history }) => {
     );
   }
 
-  if (either(isNil, isEmpty)(tasks)) {
+  if (!either(isNil, isEmpty)(tasks)) {
     return (
       <Container>
-        <h1 className="text-xl leading-5 text-center">
-          You have no tasks assigned 😔
-        </h1>
+        <ListTasks
+          data={tasks}
+          destroyTask={destroyTask}
+          updateTask={updateTask}
+          showTask={showTask}
+        />
       </Container>
     );
   }
 
   return (
     <Container>
-      <ListTasks
-        data={tasks}
-        destroyTask={destroyTask}
-        updateTask={updateTask}
-        showTask={showTask}
-      />
+      <h1 className="text-xl leading-5 text-center">
+        You have no tasks assigned 😔
+      </h1>
     </Container>
   );
 };
