@@ -1,7 +1,22 @@
 import React from "react";
 import NavItem from "./NavItem";
+import { resetAuthTokens } from "../../apis/axios";
+import { setToLocalStorage } from "helpers/storage";
+import Logger from "js-logger";
+import authApi from "../../apis/auth";
 
 const NavBar = () => {
+  const handleLogout = async () => {
+    try {
+      await authApi.logout();
+      setToLocalStorage({ authToken: null, email: null, userId: null });
+      resetAuthTokens();
+      window.location.href = "/";
+    } catch (error) {
+      Logger.error(error);
+    }
+  };
+
   return (
     <nav className="bg-white shadow">
       <div className="px-2 mx-auto max-w-7xl sm:px-4 lg:px-8">
@@ -18,6 +33,7 @@ const NavBar = () => {
           </div>
           <div className="flex items-center justify-end">
             <a
+              onClick={handleLogout}
               className="inline-flex items-center px-1 pt-1 text-sm
              font-semibold leading-5 text-bb-gray-600 text-opacity-50
              transition duration-150 ease-in-out border-b-2
