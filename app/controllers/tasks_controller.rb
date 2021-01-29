@@ -4,7 +4,9 @@ class TasksController < ApplicationController
 
   def index
     @tasks = policy_scope(Task)
-    render status: :ok, json: { tasks: @tasks }
+    pending_tasks = @tasks.pending
+    completed_tasks = @tasks.completed
+    render status: :ok, json: { tasks: { pending: pending_tasks, completed: completed_tasks } }
   end
 
   def create
@@ -21,8 +23,8 @@ class TasksController < ApplicationController
 
   def show
     authorize @task
-    comments = @task.comments.order('created_at DESC')
-    render status: :ok, json: { task: @task, assigned_user: @task.user}
+    comments = @task.comments.order("created_at DESC")
+    render status: :ok, json: { task: @task, assigned_user: @task.user }
   end
 
   def update
@@ -37,24 +39,22 @@ class TasksController < ApplicationController
   def destroy
     authorize @task
     if @task.destroy
-      render status: :ok, json: { notice: 'Successfully deleted task.' }
+      render status: :ok, json: { notice: "Successfully deleted task." }
     else
-      render status: :unprocessable_entity, json: { errors: 
-      @task.errors.full_messages }
+      render status: :unprocessable_entity, json: { errors: @task.errors.full_messages }
     end
   end
 
-
   private
-    def tasks_params 
-      params.require(:task).permit(:title, :user_id)
-    end
 
-    def load_task 
-      @task = Task.find(params[:id])
-      puts "#{@task} task from load_task"
-      rescue ActiveRecord::RecordNotFound => errors
-        render status: :not_found, json: { errors: errors}
-    end
+  def tasks_params
+    params.require(:task).permit(:title, :user_id, :progress)
+  end
 
+  def load_task
+    @task = Task.find(params[:id])
+    puts "#{@task} task from load_task"
+  rescue ActiveRecord::RecordNotFound => errors
+    render status: :not_found, json: { errors: errors }
+  end
 end
