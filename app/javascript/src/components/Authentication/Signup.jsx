@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 import SignupForm from "./Form/SignupForm";
 import authApi from "../../apis/auth";
+import Logger from "js-logger";
 
 const Signup = ({ history }) => {
   const [name, setName] = useState("");
@@ -14,7 +15,7 @@ const Signup = ({ history }) => {
     event.preventDefault();
     try {
       setLoading(true);
-      await authApi.signup({
+      const responce = await authApi.signup({
         user: {
           name,
           email,
@@ -22,11 +23,12 @@ const Signup = ({ history }) => {
           password_confirmation: passwordConfirmation,
         },
       });
+      Logger.info(responce, "response");
       setLoading(false);
       history.push("/");
     } catch (error) {
       setLoading(false);
-      logger.error(error);
+      Logger.error(error);
     }
   };
   return (

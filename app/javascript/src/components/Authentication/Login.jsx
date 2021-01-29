@@ -2,8 +2,11 @@ import React, { useState } from "react";
 
 import LoginForm from "components/Authentication/Form/LoginForm";
 import authApi from "apis/auth";
-import { setAuthHeaders } from "apis/axios";
-import { setToLocalStorage } from "helpers/storage";
+// import { setAuthHeaders } from "../../apis/auth";
+// import { setToLocalStorage } from "../../helpers/storage";
+import Logger from "js-logger";
+import { setToLocalStorage } from "../../helpers/storage";
+import { setAuthHeaders } from "../../apis/axios";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -23,7 +26,7 @@ const Login = () => {
       setLoading(false);
       window.location.href = "/";
     } catch (error) {
-      logger.error(error);
+      Logger.error(error);
       setLoading(false);
     }
   };

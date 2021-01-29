@@ -27,6 +27,9 @@ gem 'bcrypt', '~> 3.1.7'
 gem "bootsnap", ">= 1.4.4", require: false
 
 gem "react-rails"
+gem "pundit"
+
+
 
 
 group :development, :test do

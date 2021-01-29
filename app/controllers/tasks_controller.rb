@@ -3,12 +3,13 @@ class TasksController < ApplicationController
   before_action :load_task, only: %i[show update destroy]
 
   def index
-    tasks = Task.all
-    render status: :ok, json: { tasks: tasks }
+    @tasks = policy_scope(Task)
+    render status: :ok, json: { tasks: @tasks }
   end
 
   def create
     @task = Task.new(tasks_params.merge(creator_id: @current_user.id))
+    authorize @task
     if @task.save
       render status: :ok, json: { notice: "Task was successfully created" }
     else
@@ -18,10 +19,12 @@ class TasksController < ApplicationController
   end
 
   def show
+    authorize @task
     render status: :ok, json: { task: @task, assigned_user: @task.user}
   end
 
   def update
+    authorize @task
     if @task.update(tasks_params)
       render status: :ok, json: { notice: "Task was successfully updated" }
     else
@@ -30,6 +33,7 @@ class TasksController < ApplicationController
   end
 
   def destroy
+    authorize @task
     if @task.destroy
       render status: :ok, json: { notice: 'Successfully deleted task.' }
     else
