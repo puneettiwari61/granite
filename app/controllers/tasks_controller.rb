@@ -11,6 +11,7 @@ class TasksController < ApplicationController
     @task = Task.new(tasks_params.merge(creator_id: @current_user.id))
     authorize @task
     if @task.save
+      puts "commentsunique"
       render status: :ok, json: { notice: "Task was successfully created" }
     else
       errors = @task.errors.full_messages.to_sentence
@@ -20,6 +21,7 @@ class TasksController < ApplicationController
 
   def show
     authorize @task
+    comments = @task.comments.order('created_at DESC')
     render status: :ok, json: { task: @task, assigned_user: @task.user}
   end
 
