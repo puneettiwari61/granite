@@ -1,0 +1,44 @@
+import React, { useState } from "react";
+
+import LoginForm from "components/Authentication/Form/LoginForm";
+import authApi from "apis/auth";
+// import { setAuthHeaders } from "../../apis/auth";
+// import { setToLocalStorage } from "../../helpers/storage";
+import Logger from "js-logger";
+import { setToLocalStorage } from "../../helpers/storage";
+import { setAuthHeaders } from "../../apis/axios";
+
+const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async event => {
+    event.preventDefault();
+    try {
+      const response = await authApi.login({ login: { email, password } });
+      setToLocalStorage({
+        authToken: response.data.auth_token,
+        email,
+        userId: response.data.userId,
+      });
+      setAuthHeaders();
+      setLoading(false);
+      window.location.href = "/";
+    } catch (error) {
+      Logger.error(error);
+      setLoading(false);
+    }
+  };
+
+  return (
+    <LoginForm
+      setEmail={setEmail}
+      setPassword={setPassword}
+      loading={loading}
+      handleSubmit={handleSubmit}
+    />
+  );
+};
+
+export default Login;

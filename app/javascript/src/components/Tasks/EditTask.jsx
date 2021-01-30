@@ -1,27 +1,35 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import Logger from "js-logger";
+
 import Container from "../Container";
 import TaskForm from "./Form/TaskForm";
 import tasksApi from "../../apis/tasks";
 import PageLoader from "../PageLoader";
+import Toastr from "../Common/Toastr";
 import usersApi from "../../apis/users";
 
-const CreateTask = ({ history }) => {
+const EditTask = ({ history }) => {
   const [title, setTitle] = useState("");
   const [userId, setUserId] = useState("");
+  const [assignedUser, setAssignedUser] = useState("");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
+  const { id } = useParams();
 
   const handleSubmit = async event => {
     event.preventDefault();
     try {
-      await tasksApi.create({ task: { title, user_id: userId } });
+      await tasksApi.update({
+        id,
+        payload: { task: { title, user_id: userId } },
+      });
       setLoading(false);
       history.push("/");
     } catch (error) {
-      Logger.error(error);
       setLoading(false);
+      logger.error(error);
     }
   };
 
@@ -29,34 +37,55 @@ const CreateTask = ({ history }) => {
     try {
       const response = await usersApi.list();
       setUsers(response.data.users);
-      setUserId(response.data.users[0].id);
-      setPageLoading(false);
     } catch (error) {
-      Logger.error(error);
+      logger.error(error);
+    } finally {
       setPageLoading(false);
     }
   };
 
+  const fetchTaskDetails = async () => {
+    try {
+      const response = await tasksApi.show(id);
+      setTitle(response.data.task.title);
+      setAssignedUser(response.data.assigned_user);
+      setUserId(response.data.assigned_user.id);
+    } catch (error) {
+      logger.error(error);
+    }
+  };
+
+  const loadData = async () => {
+    await fetchTaskDetails();
+    await fetchUserDetails();
+  };
+
   useEffect(() => {
-    fetchUserDetails();
+    loadData();
   }, []);
 
   if (pageLoading) {
-    return <PageLoader />;
+    return (
+      <div className="w-screen h-screen">
+        <PageLoader />
+      </div>
+    );
   }
 
   return (
     <Container>
       <TaskForm
+        type="update"
+        title={title}
+        users={users}
+        assignedUser={assignedUser}
         setTitle={setTitle}
         setUserId={setUserId}
-        assignedUser={users[0]}
         loading={loading}
         handleSubmit={handleSubmit}
-        users={users}
       />
     </Container>
   );
 };
 
-export default CreateTask;
+export default EditTask;
