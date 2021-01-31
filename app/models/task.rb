@@ -1,5 +1,5 @@
 class Task < ApplicationRecord
-  after_create :log_task_details
+  # after_create :log_task_details
   belongs_to :user
   has_many :comments, dependent: :destroy
   enum progress: { pending: 0, completed: 1 }
