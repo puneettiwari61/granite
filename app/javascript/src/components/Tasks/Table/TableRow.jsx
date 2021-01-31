@@ -8,6 +8,7 @@ const TableRow = ({
   destroyTask,
   starTask,
   handleProgressToggle,
+  showTask,
 }) => {
   const isCompleted = type === "completed";
   const toggledProgress = isCompleted ? "pending" : "completed";
